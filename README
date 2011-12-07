@@ -1,0 +1,11 @@
+Wiegand to Serial C source code for MonkeyBUS PIC18
+
+1. Create a working folder in Microchip Solutions v2011-07-14\USB\ and name it anything you like 
+	for example: Microchip Solutions v2011-07-14\USB\MB Software Examples
+2. Download the firmware folder in the director you've just create
+3. Open project file with MPLAB
+4. Compile
+5. Download to MonkeyBUS
+6. Have fun!
+
+For more information or more projects, check out http://www.monkeyboard.org
