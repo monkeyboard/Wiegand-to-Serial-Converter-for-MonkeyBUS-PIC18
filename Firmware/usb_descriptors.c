@@ -165,13 +165,13 @@ state according to the definition in the USB specification.
 /* Device Descriptor */
 ROM USB_DEVICE_DESCRIPTOR device_dsc=
 {
-    0x12,    // Size of this descriptor in bytes
-    USB_DESCRIPTOR_DEVICE,                // DEVICE descriptor type
+    0x12,                   // Size of this descriptor in bytes
+    USB_DESCRIPTOR_DEVICE,  // DEVICE descriptor type
     0x0200,                 // USB Spec Release Number in BCD format
     CDC_DEVICE,             // Class Code
     0x00,                   // Subclass code
     0x00,                   // Protocol code
-    USB_EP0_BUFF_SIZE,          // Max packet size for EP0, see usb_config.h
+    USB_EP0_BUFF_SIZE,      // Max packet size for EP0, see usb_config.h
     0x04D8,                 // Vendor ID
     0x000A,                 // Product ID: CDC RS-232 Emulation Demo
     0x0100,                 // Device release number in BCD format
@@ -291,13 +291,16 @@ ROM BYTE *ROM USB_CD_Ptr[]=
     (ROM BYTE *ROM)&configDescriptor1
 };
 //Array of string descriptors
-ROM BYTE *ROM USB_SD_Ptr[]=
+ROM BYTE *ROM USB_SD_Ptr[USB_NUM_STRING_DESCRIPTORS]=
 {
     (ROM BYTE *ROM)&sd000,
     (ROM BYTE *ROM)&sd001,
     (ROM BYTE *ROM)&sd002
 };
 
-#pragma code
+#if defined(__18CXX)
+    #pragma code
+#endif
+
 #endif
 /** EOF usb_descriptors.c ****************************************************/

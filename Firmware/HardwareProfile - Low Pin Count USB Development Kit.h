@@ -9,7 +9,7 @@
  Software License Agreement:
 
  The software supplied herewith by Microchip Technology Incorporated
- (the “Company”) for its PIC® Microcontroller is intended and
+ (the “Company? for its PIC?Microcontroller is intended and
  supplied to you, the Company’s customer, for use solely and
  exclusively on Microchip PIC Microcontroller products. The
  software is owned by the Company and/or its supplier, and is
@@ -19,7 +19,7 @@
  civil liability for the breach of the terms and conditions of this
  license.
 
- THIS SOFTWARE IS PROVIDED IN AN “AS IS” CONDITION. NO WARRANTIES,
+ THIS SOFTWARE IS PROVIDED IN AN “AS IS?CONDITION. NO WARRANTIES,
  WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT NOT LIMITED
  TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
  PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. THE COMPANY SHALL NOT,
@@ -95,12 +95,17 @@
     #define GetSystemClock() CLOCK_FREQ
     
     /** LED ************************************************************/
-    #define mInitAllLEDs()      LATC &= 0xF0; TRISC &= 0xF0;
+    #define mInitAllLEDs()      LATC &= 0x00; TRISC &= 0x00;
     
     #define mLED_1              LATCbits.LATC0
     #define mLED_2              LATCbits.LATC1
     #define mLED_3              LATCbits.LATC2
     #define mLED_4              LATCbits.LATC3
+	#define mSHDN				LATCbits.LATC6
+	#define mMUTE				LATCbits.LATC7
+
+	//#define mRESET				LATCbits.LATC3
+
     
     #define mGetLED_1()         mLED_1
     #define mGetLED_2()         mLED_2
@@ -111,11 +116,21 @@
     #define mLED_2_On()         mLED_2 = 1;
     #define mLED_3_On()         mLED_3 = 1;
     #define mLED_4_On()         mLED_4 = 1;
+
+	#define mSHDN_High()		mSHDN = 1;
+	#define mMUTE_High()		mMUTE = 1;
+
+//	#define mRESET_High()		mRESET = 1;
     
     #define mLED_1_Off()        mLED_1 = 0;
     #define mLED_2_Off()        mLED_2 = 0;
     #define mLED_3_Off()        mLED_3 = 0;
     #define mLED_4_Off()        mLED_4 = 0;
+
+	#define mSHDN_Low()			mSHDN = 0;
+	#define mMUTE_Low()			mMUTE = 0;
+
+//	#define mRESET_Low()		mRESET = 0;
     
     #define mLED_1_Toggle()     mLED_1 = !mLED_1;
     #define mLED_2_Toggle()     mLED_2 = !mLED_2;
@@ -123,27 +138,41 @@
     #define mLED_4_Toggle()     mLED_4 = !mLED_4;
     
     /** SWITCH *********************************************************/
-    #define mInitSwitch2()      //TRISAbits.TRISA3=1
+    #define mInitSwitch2()      TRISAbits.TRISA3
         //only one switch available so double duty
-    #define mInitSwitch3()      //TRISAbits.TRISA3=1
+    #define mInitSwitch3()      TRISAbits.TRISA3=1;
     #define sw2                 PORTAbits.RA3
     #define sw3                 PORTAbits.RA3
-    #define mInitAllSwitches()  mInitSwitch2();
+    #define mInitAllSwitches()  mInitSwitch2()
 
 	/** RS 232 lines ****************************************************/
     #define UART_TRISTx   TRISBbits.TRISB7
     #define UART_TRISRx   TRISBbits.TRISB5
     #define UART_Tx       PORTBbits.RB7
     #define UART_Rx       PORTBbits.RB5
-    #define UART_TRISRTS  TRISBbits.TRISB4
-    #define UART_RTS      PORTBbits.RB4
-    #define UART_TRISDTR  TRISBbits.TRISB6
-    #define UART_DTR      PORTBbits.RB6
-    #define UART_ENABLE RCSTAbits.SPEN
+    #define UART_ENABLE   RCSTAbits.SPEN
 
     /** I/O pin definitions ********************************************/
     #define INPUT_PIN 1
     #define OUTPUT_PIN 0
+
+    //These definitions are only relevant if the respective functions are enabled
+    //in the usb_config.h file.
+    //Make sure these definitions match the GPIO pins being used for your hardware
+    //setup.
+    #define UART_DTS PORTAbits.RA3
+    #define UART_DTR LATCbits.LATC3
+    #define UART_RTS LATCbits.LATC7
+//    #define UART_RTS LATBbits.LATB4
+    #define UART_CTS PORTBbits.RB6
+    
+    //#define mInitRTSPin() {TRISBbits.TRISB4 = 0;}   //Configure RTS as a digital output.  
+    #define mInitRTSPin() {TRISCbits.TRISC7 = 0;}   //Configure RTS as a digital output.  
+
+    #define mInitCTSPin() {TRISBbits.TRISB6 = 1;}   //Configure CTS as a digital input.  (Make sure pin is digital if ANxx functions is present on the pin)
+    //#define mInitDTSPin() {TRISAbits.TRISA3 = 1;}   //Configure DTS as a digital input.  (Make sure pin is digital if ANxx functions is present on the pin)
+    #define mInitDTRPin() {TRISCbits.TRISC3 = 0;}   //Configure DTR as a digital output.
+	
 	/** Weigand pins ***************************************************/
 	//Set INT0 and INT2 to input
 	#define mTwiPinInit()	TRISCbits.TRISC0 = 1; TRISCbits.TRISC2 = 1;
@@ -166,5 +195,5 @@
 	//65535-3000=62536=0xF448
 	#define mReloadTm0() TMR0H = 0xF4; TMR0L = 0x48;
 	//Enable timer and globle interrupt
-	#define mEnInt() INTCONbits.TMR0IE = 1; INTCONbits.GIE  = 1; 
+	#define mEnInt() INTCONbits.TMR0IE = 1; INTCONbits.GIE  = 1;  
 #endif  //HARDWARE_PROFILE_LOW_PIN_COUNT_USB_DEVELOPMENT_KIT_H

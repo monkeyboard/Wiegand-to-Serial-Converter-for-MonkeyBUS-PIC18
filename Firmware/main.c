@@ -1061,10 +1061,10 @@ void DoWiegandCoversion (void)
 	if (_gotCard)
 	{
 		mLED_4_Off();
-		RS232_Out_Data[sCount] = 'w';
-		sCount++;
-		RS232_Out_Data[sCount] = ' ';
-		sCount++;
+//		RS232_Out_Data[sCount] = 'w';
+//		sCount++;
+//		RS232_Out_Data[sCount] = ' ';
+//		sCount++;
 		RS232_Out_Data[sCount] = '0';
 		sCount++;
 		RS232_Out_Data[sCount] = 'x';
@@ -1155,10 +1155,14 @@ void ProcessIO(void)
     //queue.  If so, send it out the UART TX pin.
 	if(RS232_Out_Data_Rdy && mTxRdyUSART())
 	{
-		putcUSART(RS232_Out_Data[RS232cp]);
-		++RS232cp;
-		if (RS232cp == LastRS232Out)
-			RS232_Out_Data_Rdy = 0;
+
+		// Change this part to send the data to Virtual Serial Port instead of real UART port
+		putUSBUSART(&RS232_Out_Data[RS232cp],LastRS232Out);
+
+		//putcUSART(RS232_Out_Data[RS232cp]);
+		//++RS232cp;
+		//if (RS232cp == LastRS232Out)
+		RS232_Out_Data_Rdy = 0;
 	}
 
     //Check if we received a character over the physical UART, and we need

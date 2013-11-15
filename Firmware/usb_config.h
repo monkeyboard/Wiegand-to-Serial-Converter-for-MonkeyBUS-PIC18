@@ -4,7 +4,7 @@
                	Situational: usb_function_hid.h, usb_function_cdc.h, usb_function_msd.h, etc.
  Processor:		PIC18 or PIC24 USB Microcontrollers
  Hardware:		The code is natively intended to be used on the following
- 				hardware platforms: PICDEM™ FS USB Demo Board, 
+ 				hardware platforms: PICDEM?FS USB Demo Board, 
  				PIC18F87J50 FS USB Plug-In Module, or
  				Explorer 16 + PIC24 USB PIM.  The firmware may be
  				modified for use on other USB platforms by editing the
@@ -15,7 +15,7 @@
  Software License Agreement:
 
  The software supplied herewith by Microchip Technology Incorporated
- (the “Company”) for its PIC® Microcontroller is intended and
+ (the “Company? for its PIC?Microcontroller is intended and
  supplied to you, the Company’s customer, for use solely and
  exclusively on Microchip PIC Microcontroller products. The
  software is owned by the Company and/or its supplier, and is
@@ -25,7 +25,7 @@
  civil liability for the breach of the terms and conditions of this
  license.
 
- THIS SOFTWARE IS PROVIDED IN AN “AS IS” CONDITION. NO WARRANTIES,
+ THIS SOFTWARE IS PROVIDED IN AN “AS IS?CONDITION. NO WARRANTIES,
  WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT NOT LIMITED
  TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
  PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. THE COMPANY SHALL NOT,
@@ -59,7 +59,7 @@
 								// that use EP0 IN or OUT for sending large amounts of
 								// application related data.
 									
-#define USB_MAX_NUM_INT     	1   // For tracking Alternate Setting
+#define USB_MAX_NUM_INT     	2   // For tracking Alternate Setting
 
 //Device descriptor - if these two definitions are not defined then
 //  a ROM USB_DEVICE_DESCRIPTOR variable by the exact name of device_dsc
@@ -80,8 +80,8 @@
 //#define USB_PING_PONG_MODE USB_PING_PONG__ALL_BUT_EP0		//NOTE: This mode is not supported in PIC18F4550 family rev A3 devices
 
 
-//#define USB_POLLING
-#define USB_INTERRUPT
+#define USB_POLLING
+//#define USB_INTERRUPT
 
 /* Parameter definitions are defined in usb_device.h */
 #define USB_PULLUP_OPTION USB_PULLUP_ENABLE
@@ -163,8 +163,8 @@
 
 /* CDC */
 #define CDC_COMM_INTF_ID        0x0
-#define CDC_COMM_EP              1
-#define CDC_COMM_IN_EP_SIZE      8
+#define CDC_COMM_EP             1
+#define CDC_COMM_IN_EP_SIZE     10
 
 #define CDC_DATA_INTF_ID        0x01
 #define CDC_DATA_EP             2
@@ -172,10 +172,39 @@
 #define CDC_DATA_IN_EP_SIZE     64
 
 #define USB_CDC_SET_LINE_CODING_HANDLER mySetLineCodingHandler
-//#define USB_CDC_SUPPORT_HARDWARE_FLOW_CONTROL
+
+
+//------------------------------------------------------------------------------                                                
+//Uncomment the "extra UART signals" that are desired to be enabled/supported.  
+//These items are optional and none of them are required for basic RX and TX
+//USB to UART translator devices.
+//If one or more of the below options is enabled however, make sure that the
+//polarity is selected correctly, and that the respective pin definitions 
+//(ex: UART_RTS) and initialization macros (ex: mInitRTSPin()) are present and 
+//defined correctly in the HardwareProfile - [platform name].h file.  
+//------------------------------------------------------------------------------                                                
+//#define USB_CDC_SUPPORT_DSR_REPORTING   //Signal from UART peripheral device, to CDC/USB host.  Indicates UART peripheral is ready to receive data and/or commands.
+#define USB_CDC_SUPPORT_DTR_SIGNALING   //Signal sent from the USB/CDC host, down to the UART peripheral device
+//#define USB_CDC_SUPPORT_HARDWARE_FLOW_CONTROL   //Implements RTS/CTS UART flow control.
+
+//RTS is GPIO output signal from CDC/USB host micro (indicates UART Rx buffer 
+//   space available, and that the UART peripheral device is free to send data to the USB CDC micro)
+//CTS is GPIO input on CDC/USB host micro (allows UART peripheral to tell the 
+//   UART host [the USB micro] not to send anymore Tx data to it for awhile)
+
+//Define the logic level for the "active" state.  Setting is only relevant if 
+//the respective function is enabled.  Allowed options are:
+//1 = active state logic level is Vdd
+//0 = active state logic level is Vss
+#define USB_CDC_CTS_ACTIVE_LEVEL    0
+#define USB_CDC_RTS_ACTIVE_LEVEL    0
+#define USB_CDC_DSR_ACTIVE_LEVEL    0
+#define USB_CDC_DTR_ACTIVE_LEVEL    0                                      
 
 //#define USB_CDC_SUPPORT_ABSTRACT_CONTROL_MANAGEMENT_CAPABILITIES_D2 //Send_Break command
 #define USB_CDC_SUPPORT_ABSTRACT_CONTROL_MANAGEMENT_CAPABILITIES_D1 //Set_Line_Coding, Set_Control_Line_State, Get_Line_Coding, and Serial_State commands
 /** DEFINITIONS ****************************************************/
+
+#define TXRX_LED_DELAY	80
 
 #endif //USBCFG_H
